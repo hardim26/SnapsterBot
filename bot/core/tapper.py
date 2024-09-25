@@ -70,6 +70,8 @@ class Tapper:
         load = next(
             (session['user_agent'] for session in self.session_ug_dict if session['session_name'] == self.session_name),
             None)
+        tm = random.randint(10, 30)
+        await asyncio.sleep(delay=tm)
 
         if load is None:
             return self.save_user_agent()
@@ -203,6 +205,8 @@ class Tapper:
                                                 json={'telegramId': str(self.user_id)})
             resp_json = await resp_json.json()
             points = resp_json.get('data', {}).get('pointsClaimed', 0)
+            tm = random.randint(10, 30)
+            await asyncio.sleep(delay=tm)
             return points
         except Exception as error:
             logger.error(f"{self.session_name} | Claim mining error: {error}")
@@ -213,6 +217,8 @@ class Tapper:
                                                                     f'?telegramId={self.user_id}')
             resp_json = await resp_json.json(content_type=None)
             return resp_json.get('data', {}).get('pointsToClaim', 0)
+            tm = random.randint(10, 30)
+            await asyncio.sleep(delay=tm)
         except Exception as error:
             logger.error(f"{self.session_name} | RefPoints error: {error}")
 
@@ -252,7 +258,11 @@ class Tapper:
             resp_json = await self.make_request(http_client, 'POST', 'quest/startQuest',
                                                 json={"telegramId": str(self.user_id),"questId": quest_id})
             resp_json = await resp_json.json(content_type=None)
+            tm = random.randint(10, 30)
+            await asyncio.sleep(delay=tm)
             if resp_json.get('result', {}) is True:
+                tm = random.randint(10, 30)
+                await asyncio.sleep(delay=tm)
                 return True
             return False
 
@@ -307,6 +317,8 @@ class Tapper:
                         if not self.first_run:
                             logger.success(
                                 f"{self.session_name} | Logged in")
+                            tm = random.randint(10, 30)
+                            await asyncio.sleep(delay=tm)
                             self.first_run = True
 
                     daily_streak = await self.get_stats(http_client=http_client)
@@ -316,6 +328,8 @@ class Tapper:
                     streak_status = await self.start_daily_streak(http_client=http_client)
                     if streak_status:
                         logger.success(f"{self.session_name} | Daily streak started")
+                        tm = random.randint(10, 30)
+                        await asyncio.sleep(delay=tm)
                     else:
                         logger.info(f"{self.session_name} | Can`t start daily streak, already started")
 
@@ -323,14 +337,16 @@ class Tapper:
                         status = await self.join_daily(http_client=http_client, days=daily_streak)
                         if status:
                             logger.success(f"{self.session_name} | Daily joined, got points")
-
+                            tm = random.randint(10, 30)
+                            await asyncio.sleep(delay=tm)
                     await asyncio.sleep(2)
 
                     if settings.AUTO_MINING:
                         points = await self.claim_mining(http_client=http_client)
                         if points and points > 1:
                             logger.success(f'{self.session_name} | Successfully mined <lc>{points}</lc> points')
-
+                            tm = random.randint(10, 30)
+                            await asyncio.sleep(delay=tm)
                     await asyncio.sleep(2)
 
                     if settings.CLAIM_REF_POINTS:
@@ -340,7 +356,7 @@ class Tapper:
                             if status:
                                 logger.success(f"{self.session_name} | Points from referrals claimed, got - <lc>{ref_points}</lc>")
 
-                    await asyncio.sleep(2)
+                    await asyncio.sleep(7)
 
                     if settings.AUTO_QUEST:
                         try:
@@ -355,13 +371,16 @@ class Tapper:
                                 if status:
                                     logger.success(f'{self.session_name} | Successfully done quest - <ly>"{title}"</ly>, '
                                                    f'got <lc>{points}</lc> points')
+                                    tm = random.randint(10, 30)
+                                    await asyncio.sleep(delay=tm)
                                 await asyncio.sleep(.1)
                         except Exception:
                             pass
-
+                    tm = random.randint(10, 30)
+                    await asyncio.sleep(delay=tm)
                     logger.info(f"{self.session_name} | Going sleep 1h")
-
-                    await asyncio.sleep(delay=3600)
+                    tm1 = random.randint(3600, 10800)
+                    await asyncio.sleep(delay=tm1)
 
                 except InvalidSession as error:
                     raise error
