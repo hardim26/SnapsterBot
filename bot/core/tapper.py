@@ -70,8 +70,6 @@ class Tapper:
         load = next(
             (session['user_agent'] for session in self.session_ug_dict if session['session_name'] == self.session_name),
             None)
-        tm = random.randint(10, 30)
-        await asyncio.sleep(delay=tm)
 
         if load is None:
             return self.save_user_agent()
